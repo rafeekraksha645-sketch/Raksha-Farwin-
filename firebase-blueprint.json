@@ -1,0 +1,224 @@
+{
+  "entities": {
+    "UserPreferences": {
+      "title": "UserPreferences",
+      "description": "User-scoped NEXORA AI language, theme, and assistant behavior preferences. Clients must submit FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase user UID."
+        },
+        "language": {
+          "type": "string",
+          "enum": ["AUTO", "ENGLISH", "TAMIL", "SINHALA"],
+          "description": "Preferred response and UI language mode."
+        },
+        "themeMode": {
+          "type": "string",
+          "enum": ["DARK", "LIGHT", "SYSTEM"],
+          "description": "Application visual theme preference."
+        },
+        "responseStyle": {
+          "type": "string",
+          "enum": ["CONCISE", "BALANCED", "DETAILED"],
+          "description": "Preferred AI response depth."
+        },
+        "simpleExplanations": {
+          "type": "boolean",
+          "description": "Whether the AI simplifies complex technical jargon."
+        },
+        "defaultMode": {
+          "type": "string",
+          "enum": [
+            "GENERAL_IT",
+            "LEARNING",
+            "PROGRAMMING",
+            "DEBUGGING",
+            "CYBERSECURITY",
+            "RESEARCH",
+            "CAREER_GUIDANCE"
+          ],
+          "description": "Default specialized AI assistant mode."
+        },
+        "modelTier": {
+          "type": "string",
+          "enum": ["FLASH", "FLASH_LITE"],
+          "description": "Selected Gemini model tier."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated last update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "language",
+        "themeMode",
+        "responseStyle",
+        "simpleExplanations",
+        "defaultMode",
+        "modelTier",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "User-scoped NEXORA AI chat session metadata. Clients must submit FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase user UID."
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title of the conversation."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "GENERAL_IT",
+            "LEARNING",
+            "PROGRAMMING",
+            "DEBUGGING",
+            "CYBERSECURITY",
+            "RESEARCH",
+            "CAREER_GUIDANCE"
+          ],
+          "description": "Active specialized AI mode for this conversation."
+        },
+        "language": {
+          "type": "string",
+          "enum": ["AUTO", "ENGLISH", "TAMIL", "SINHALA"],
+          "description": "Language setting associated with this conversation."
+        },
+        "lastMessagePreview": {
+          "type": "string",
+          "description": "Short preview of the latest message."
+        },
+        "messageCount": {
+          "type": "integer",
+          "description": "Number of messages in this conversation."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated last update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "mode",
+        "language",
+        "lastMessagePreview",
+        "messageCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual user or Gemini model message inside a user-owned conversation. Clients must submit FieldValue.serverTimestamp() for createdAt and updatedAt.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase user UID."
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Parent conversation document ID."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "model"],
+          "description": "Message author role."
+        },
+        "content": {
+          "type": "string",
+          "description": "Markdown text content of the message."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "GENERAL_IT",
+            "LEARNING",
+            "PROGRAMMING",
+            "DEBUGGING",
+            "CYBERSECURITY",
+            "RESEARCH",
+            "CAREER_GUIDANCE"
+          ],
+          "description": "Specialized mode active when the message was created."
+        },
+        "hasError": {
+          "type": "boolean",
+          "description": "Whether this message represents a failed generation."
+        },
+        "sequenceIndex": {
+          "type": "integer",
+          "description": "Monotonic ordering index within the conversation."
+        },
+        "attachedImageHint": {
+          "type": "string",
+          "description": "Optional note if a user attached a screenshot or diagram."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server-generated last update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "conversationId",
+        "role",
+        "content",
+        "mode",
+        "hasError",
+        "sequenceIndex",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/preferences/{prefId}": {
+      "schema": {
+        "$ref": "#/entities/UserPreferences"
+      },
+      "description": "Stores per-user NEXORA AI preferences and settings."
+    },
+    "/users/{userId}/conversations/{conversationId}": {
+      "schema": {
+        "$ref": "#/entities/Conversation"
+      },
+      "description": "Stores user-isolated NEXORA AI chat conversations."
+    },
+    "/users/{userId}/conversations/{conversationId}/messages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/ChatMessage"
+      },
+      "description": "Stores ordered messages within a user-owned NEXORA AI conversation."
+    }
+  }
+}
